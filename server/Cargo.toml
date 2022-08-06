@@ -1,0 +1,32 @@
+[package]
+name = "server"
+version = "0.0.1"
+authors = ["JungHyun Kim <jidoc01@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+crypt = { path = "../crypt" }
+
+encoding = { version = "0.2" }
+tokio = { version = "1.19.1", features = ["full"] }
+once_cell = { version = "1.12.0" }
+byteorder = { version = "1.2" }
+rand = { version = "0.8.5" }
+anyhow = { version = "1.0" }
+async-trait = { version = "0.1.56" }
+#legion = { version = "0.4.0" }
+#parking_lot = { version = "0.4.0" }
+#rocksdb = { version = "0.18.0" }
+#confy = { version = "0.4.0" }
+config = { version = "0.13.1" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0" }
+sha3 = { version = "0.10.1" }
+#diesel = { version = "1.4.8", features = [ "sqlite" ] }
+#hotpot-db = "0.0.2"
+rusqlite = { version = "0.21.0", features = ["bundled"] }
+nosqlite = { git = "https://github.com/HiruNya/nosqlite.git" }
+#ejdb = { version = "0.4" }
+hex = "*"
+dotenv = "*"
+chrono = "0.4.0"

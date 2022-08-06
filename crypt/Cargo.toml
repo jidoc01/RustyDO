@@ -1,0 +1,10 @@
+[package]
+name = "crypt"
+version = "0.0.1"
+authors = ["JungHyun Kim <jidoc01@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+winapi = { version = "0.3", features = ["wincrypt"] }
+once_cell = "1.12.0"
+anyhow = { version = "1.0" }

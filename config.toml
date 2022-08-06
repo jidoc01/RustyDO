@@ -1,0 +1,34 @@
+[server]
+# A password which is used when servers communicate with each other.
+# If it is empty, then it is filled with a random string to prevent attack.
+password        = ""
+use_auto_account= true
+# TODO
+max_users       = 1000
+# TODO
+tick_per_second = 20
+
+
+[user]
+initial_level   = 1
+initial_money   = 999999999
+
+
+[message]
+notice          = '''
+[디지몬 온라인 v1.5 프리서버 CBT]
+
+안녕하세요, 테이머 여러분.
+즐거운 CBT를 위해 몇 가지 안내드릴 사항이 있어, 아래와 같이 공지드립니다.
+
+· 게임머니는 충분히 많이 지급되오니 아이템을 적극 사용해 주세요.
+· 일부 기능들은 미구현입니다: 게시판, 랭킹, 사용자 간 DM.
+   해당 기능들은 인게임과 무관한 관계로, 차후 개발 예정입니다.
+· 인게임에서의 일부 구현 (동글몬 및 아이템 드롭)은, 당시의 정보가 부족한 관계로
+   아직 완전히 재현되지 않았습니다. 충분한 정보가 모이는 대로 재현될 것입니다.
+· 10분 간 아무런 행동을 취하지 않으면 접속 종료됩니다.
+
+감사합니다.
+
+지덕.
+'''
