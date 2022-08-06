@@ -22,6 +22,23 @@ free time. The goal is to recreate the game server of the time. Due to the lack
 of information, difficulties are expected, but we can try to imitate it as much
 as we can.
 
+## Videos
+
+[![Video Label](http://img.youtube.com/vi/qFHj128fxyM/0.jpg)](https://youtu.be/qFHj128fxyMI)
+
+## Screenshots
+
+| ![lobby](https://user-images.githubusercontent.com/12146267/183245660-494904c7-a072-4f31-839e-db5fffd7d04d.png) |
+|:--:|
+| *In a lobby* |
+
+| ![room](https://user-images.githubusercontent.com/12146267/183245665-af69dc61-a110-4577-a1e3-a4baa2fc7247.png) |
+|:--:|
+| *In a room* |
+
+| ![game](https://user-images.githubusercontent.com/12146267/183245667-5524b15f-648a-4d35-aaf6-b6dbb95eb018.png) | 
+|:--:| 
+| *In a game* |
 
 ## References
 
