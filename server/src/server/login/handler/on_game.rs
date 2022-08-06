@@ -43,7 +43,30 @@ fn on_chat(server: &mut Server, entity_id: &EntityId, mut pr: PacketReader) -> R
     );
     
     let users = match chat_kind {
-        0 => { // Team chat
+        0 => { // To all
+            let entity = world.get(entity_id)?;
+            let on_room_info = entity.get::<OnRoomInfo>()?;
+            let room_entity_id = on_room_info.room_entity_id;
+            let room_entity = world.get(&room_entity_id)?;
+            let room_info = room_entity.get::<RoomInfo>()?;
+            let mut users = vec!();
+            room_info
+                .members
+                .iter()
+                .for_each(|member| {
+                    if let Some(member_entity_id) = member {
+                        if let Ok(member_entity) = world.get(member_entity_id) {
+                            users.push(member_entity);
+                        }
+                    }
+                });
+            users
+        },
+        1 => { // Whisper
+            // TODO
+            vec!()
+        },
+        2 => { // Team chat
             let entity = world.get(entity_id)?;
             let on_room_info = entity.get::<OnRoomInfo>()?;
             let team_no = on_room_info.team;
@@ -64,29 +87,6 @@ fn on_chat(server: &mut Server, entity_id: &EntityId, mut pr: PacketReader) -> R
                             if team_no == curr_team_no {
                                 users.push(member_entity);
                             }
-                        }
-                    }
-                });
-            users
-        },
-        1 => { // Whisper
-            // TODO
-            vec!()
-        },
-        2 => { // To all
-            let entity = world.get(entity_id)?;
-            let on_room_info = entity.get::<OnRoomInfo>()?;
-            let room_entity_id = on_room_info.room_entity_id;
-            let room_entity = world.get(&room_entity_id)?;
-            let room_info = room_entity.get::<RoomInfo>()?;
-            let mut users = vec!();
-            room_info
-                .members
-                .iter()
-                .for_each(|member| {
-                    if let Some(member_entity_id) = member {
-                        if let Ok(member_entity) = world.get(member_entity_id) {
-                            users.push(member_entity);
                         }
                     }
                 });
