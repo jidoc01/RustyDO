@@ -219,10 +219,22 @@ fn change_turn(world: &mut World, room_eid: &EntityId, is_starting_game: bool) {
             .get_mut(&room_eid)
             .unwrap();
         if !is_starting_game {
+            // Try to find the next player who has not played yet and is still
+            // alive.
             let game_info = room
                 .get_mut::<GameInfo>()
                 .unwrap();
-            game_info.turn_index += 1;
+            let turn_table_len = game_info.turn_table.len();
+            let mut idx = game_info.turn_index + 1;
+            while idx < turn_table_len {
+                let i = game_info.turn_table[idx];
+                let hp = game_info.player_infos[i].hp;
+                if hp != 0 {
+                    break;
+                }
+                idx += 1;
+            }
+            game_info.turn_index = idx;
         }
     }
 
