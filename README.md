@@ -51,10 +51,14 @@ as we can.
 
 ## How to run
 
-### Pre-requisite
+### Pre-requisite for Server
 
 + OS: Windows 10+ (64 bits)
-+ Rust: Cargo 1.62.0+
++ Rust: [Cargo 1.62.0+](https://www.rust-lang.org/tools/install)
++ Git: [Git](https://git-scm.com/downloads)
++ Visual C++:
+  + [VS Build Tools 2019+](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16) with `Desktop Development with C++` checked
+  + [Redistributable Package for VS 2015](https://www.microsoft.com/ko-kr/download/details.aspx?id=48145)
 
 ### Build the source code
 
@@ -169,3 +173,5 @@ There are features not implemented (or finished) yet. You can search `TODO` in t
 ## License
 
 [GNU AGPL v3+](https://www.gnu.org/licenses/agpl-3.0.en.html)
+
+Copyright 2022 JungHyun Kim
