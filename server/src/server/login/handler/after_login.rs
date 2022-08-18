@@ -43,7 +43,7 @@ fn send_notice(server: &mut Server, entity_id: &EntityId, pr: PacketReader) -> R
 }
 
 fn send_ticker(server: &mut Server, entity_id: &EntityId, _pr: PacketReader) -> Result<()> {
-    let msg_initial = "디지몬 온라인에 오신것을 환영합니다. 게임을 시작할 서버를 골라주세요. 문의사항은 홈페이지에 문의해 주십시오.";
+    let msg_initial = "디지몬 온라인에 오신것을 환영합니다. 게임을 시작할 서버를 골라주세요. 문의사항은 홈페이지에 문의해 주십시오";
     let msg_board = "자유롭게 이야기하는 공간압니다. 타인을 비방하는 글이나 욕은 삼가 해주세요.";
     let msg_ranking = "현재 순위를 확인하는 공간합니다. 내 순위를 알고 싶을때에는 찾기 기능을 이용해주세요.";
     let msg_selection = "디지몬 온라인에 대한 정보가 게시 되는 공간입니다.";
