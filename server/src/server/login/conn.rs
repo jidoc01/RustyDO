@@ -1,8 +1,19 @@
-// Copyright 2022 JungHyun Kim
-// This file is part of RustyDO.
-// RustyDO is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-// RustyDO is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
-// You should have received a copy of the GNU Affero General Public License along with RustyDO. If not, see <https://www.gnu.org/licenses/>.
+// RustyDO
+//
+// Copyright 2022. JungHyun Kim (jidoc01).
+//
+// This program is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use crate::prelude::*;
 use tokio::{sync::mpsc::{UnboundedSender, unbounded_channel, UnboundedReceiver}, net::{TcpStream, tcp::{OwnedReadHalf, OwnedWriteHalf}}, io::AsyncReadExt};
@@ -107,7 +118,7 @@ impl Conn {
                 *state = RecvState::WaitForBody;
             },
             RecvState::WaitForBody => {
-                let decrypted = crypt::decrypt(&buf);
+                let decrypted = crypt::transfer(&buf);
                 let pr = PacketReader::new(&decrypted);
                 let entity = self.entity_id;
                 self.server_tx.send(MsgToServer::OnPacketReceived(entity, pr))?;

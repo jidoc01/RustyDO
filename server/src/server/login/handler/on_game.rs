@@ -1,8 +1,19 @@
-// Copyright 2022 JungHyun Kim
-// This file is part of RustyDO.
-// RustyDO is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-// RustyDO is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
-// You should have received a copy of the GNU Affero General Public License along with RustyDO. If not, see <https://www.gnu.org/licenses/>.
+// RustyDO
+//
+// Copyright 2022. JungHyun Kim (jidoc01).
+//
+// This program is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use std::{cmp::Ordering, rc::Rc};
 
@@ -123,7 +134,7 @@ fn make_turn_change_pkt(
     pw
         .i32(wind_velocity as i32) // -30 ~ 30 (wind velocity)
     // 12 unknown
-        .u8(0) // 1 or 0
+        .u8(1) // 1 or 0
         .u8(0) // if [12] == 0
     // 14~16 kurumon
         .u8(if_else(kurumon.is_some(), 0, 1)) // 1 or 0
