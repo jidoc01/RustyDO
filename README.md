@@ -15,6 +15,15 @@ consequences of using this.
 
 This repository is maintained by JungHyun Kim (@jidoc01).
 
+
+## Announcements
+
+### RC4 Algorithm
+
+Now, RustyDO uses its self-contained RC4 algorithm, which does not require
+Windows APIs. At the same time, it won't need Windows OS for its environment.
+
+
 ## Objective
 
 This project is an open-source version of a toy server that I used to make in my
@@ -22,9 +31,11 @@ free time. The goal is to recreate the game server of the time. Due to the lack
 of information, difficulties are expected, but we can try to imitate it as much
 as we can.
 
+
 ## Videos
 
 [![Video Label](http://img.youtube.com/vi/qFHj128fxyM/0.jpg)](https://youtu.be/qFHj128fxyMI)
+
 
 ## Screenshots
 
@@ -40,6 +51,7 @@ as we can.
 |:--:| 
 | *In a game* |
 
+
 ## References
 
 + Wiki:
@@ -51,16 +63,18 @@ as we can.
 
 ## How to run
 
-### Pre-requisite for Server
+### 0. Pre-requisite
 
-+ OS: Windows 10+ (64 bits)
+#### For Server
+
 + Rust: [Cargo 1.62.0+](https://www.rust-lang.org/tools/install)
 + Git: [Git](https://git-scm.com/downloads)
-+ Visual C++:
-  + [VS Build Tools 2019+](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16) with `Desktop Development with C++` checked
-  + [Redistributable Package for VS 2015](https://www.microsoft.com/ko-kr/download/details.aspx?id=48145)
 
-### Build the source code
+#### For Client
+
++ Windows OS 
+
+### [Server] 1. Build the source code
 
 First, you need to clone this respository: 
 `git clone https://github.com/jidoc01/RustyDO`
@@ -68,21 +82,21 @@ First, you need to clone this respository:
 After cloning it, compile the source code:
 `cargo build --release`
 
-When it succeeds, it will generate an executable on `{root_directory}/target/release/server.exe`. Copy the executable to some place and put `config.toml` to the same directory.
+When it succeeds, it will generate an executable on `{root_directory}/target/release/server.*`. Copy the executable to some place and put `config.toml` to the same directory.
 
-### Run the server
+### [Server] 2. Run the server
 
-To run the server, launch the `server.exe`. It will open network port `9874` for both TCP and UDP. So, you should not use any of the same ports to prevent port collision. It is not modifiable unless you directly hack the client, and it is easily achievable but  out-of-scope here.
+To run the server, launch the `server.*`. It will open network port `9874` for both TCP and UDP. So, you should not use any of the same ports to prevent port collision. It is not modifiable unless you directly hack the client, and it is easily achievable but  out-of-scope here.
 
-### Run the client
+### [Client] 1. Prepare the client program
 
-First, download the client file `digimonbattleserver.rar` and uncompress it to some place.
+First, download the client file `digimonbattleserver.rar` and uncompress it to some place. In its root directory, there are three sub-directories. You will use `Digimon Online` directory only.
 
-In its root directory, there are three sub-directories. You will use `Digimon Online` directory only.
+And, you should edit configurations to launch the client program.
 
-Before launching the client, you should prepare some configurations.
+*NOTE*: You should not share the client with any modification. It is strictly forbidden in Korean copyright law. The archived client is as it was 2002 without modification.
 
-#### Edit the server configuration
+#### [Client] 2-1. Edit the configuration
 
 In the `Digimon Online` directory, there is `svr.info`, and open it with a text editor. Then, you can see ip addresses there. Replace them with your ip address. Let `SERVER_IP` be your ip address, then it'd look like:
 
@@ -94,7 +108,7 @@ In the `Digimon Online` directory, there is `svr.info`, and open it with a text 
 
 Note that the address should be a ***public*** ip address if it needs to be accessed via public network. And it should be a ***dot-separated*** address, not a domain name.
 
-#### Edit the registry
+#### [Client] 2-2. Edit the registry
 
 You need to write the absolute path of `Digimon Online` directory into the registry item  `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\X2Online\Digimon Online V1.5` with a key `PATH`.
 
@@ -107,7 +121,7 @@ Windows Registry Editor Version 5.00
 "PATH"="C:\\X2Online\\Digimon Online"
 ```
 
-#### Launch the client executable
+### [Client] 3. Launch the client executable
 
 Now you can launch the client executable in `Digimon Online` directory. In the directory, the following instruction will launch the game: `digimon.dll "1 1"`.
 
@@ -126,7 +140,7 @@ Rust language, but I am not very fluent in the language. And I am not aware of
 server architectures. Feel free to suggest any form of improvement in its design.
 
 
-## Features
+## TODOs
 
 There are features not implemented (or finished) yet. You can search `TODO` in the source code to check what features are not implemented yet.
 
