@@ -406,9 +406,8 @@ fn check_if_game_finished(world: &World, room_eid: &EntityId) -> Option<usize> {
         .iter()
         .filter(|&&n| n > 0)
         .count();
-    // TODO: Needs death-match.
     if survived_teams == 0 {
-        todo!("Death match");
+        Some(8)
     } else if survived_teams == 1 {
         let (team_id, _n) = survivors_by_team
             .iter()
