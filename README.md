@@ -174,4 +174,4 @@ There are features not implemented (or finished) yet. You can search `TODO` in t
 
 [GNU AGPL v3+](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
-Copyright 2022 JungHyun Kim
+Copyright 2022. JungHyun Kim (jidoc01).
