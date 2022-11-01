@@ -7,7 +7,7 @@ permalink: /docs/getting-started
 ---
 
 {: .note }
-한글 문서는 [이곳]({% link docs/getting-started/ko.md %})을 참조하세요.
+한글 문서는 [이곳]({{'/RustyDO/docs/getting-started/ko' }})을 참조하세요.
 
 
 # Getting Started
