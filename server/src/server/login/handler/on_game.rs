@@ -16,6 +16,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use std::{cmp::Ordering, rc::Rc};
+use rand::Rng;
 
 use crate::prelude::*;
 use super::*;
@@ -52,7 +53,7 @@ fn on_chat(server: &mut Server, entity_id: &EntityId, mut pr: PacketReader) -> R
     let room_eid = get_room_eid(world, entity_id);
     let room = world.get(&room_eid)?;
     let index_in_room = entity::room::get_index_in_room(room, entity_id).unwrap();
-        
+    
     println!("On Game - {name} : {text}");
 
     // TODO: Emoticon.
@@ -129,7 +130,11 @@ fn make_turn_change_pkt(
         delay_list: &Vec<u16>,
         hp_list: &Vec<u32>
     ) -> Vec<u8> {
-    let (item_no, item_pos) = item.unwrap_or((0, 0));
+    //let (item_no, item_pos) = item.unwrap_or((0, 0));
+    let kuru_position = rand::thread_rng().gen_range(10..65525);
+    let item_position = rand::thread_rng().gen_range(10..65525);
+    //아이템 번호 확인 필요
+    let item_no = rand::thread_rng().gen_range(0..20);
 
     let mut pw = PacketWriter::new(PACKET_END_TURN + 1);
     // 8
@@ -139,14 +144,16 @@ fn make_turn_change_pkt(
         .u8(1) // 1 or 0
         .u8(0) // if [12] == 0
     // 14~16 kurumon
-        .u8(if_else(kurumon.is_some(), 0, 1)) // 1 or 0
+    // 동글몬 나오긴 하지만 확실히 작동하는지 확인 필요함
+    // kuru_position, item_position 0~2^16 사이로 맵 가로 좌표값으로 작동하는듯
+        .u8(if_else(kurumon.is_some(), 1, 0)) // 1 or 0
         .pad(1)
-        .u16(kurumon.unwrap_or(0)) // if [14] == 0 then kurumon position
+        .u16(kurumon.unwrap_or(kuru_position)) // if [14] == 0 then kurumon position
     // 18 unknown
         .u8(0x00) // if [18] & 0x10 != 0 then [18] & 0x0F (low bits)
     // 19~20 item
         .u8(item_no) // item (0: no item)
-        .u16(item_pos) // item position
+        .u16(item_position) // item position
     // 22
         .u8(1) // visible
     // 23
