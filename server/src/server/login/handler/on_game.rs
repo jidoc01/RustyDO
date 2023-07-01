@@ -52,6 +52,8 @@ fn on_chat(server: &mut Server, entity_id: &EntityId, mut pr: PacketReader) -> R
     let room_eid = get_room_eid(world, entity_id);
     let room = world.get(&room_eid)?;
     let index_in_room = entity::room::get_index_in_room(room, entity_id).unwrap();
+        
+    println!("On Game - {name} : {text}");
 
     // TODO: Emoticon.
     let pkt = packet::chat_in_game(

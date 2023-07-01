@@ -63,6 +63,8 @@ pub fn on_chat(server: &mut Server, entity_id: &EntityId, mut pr: PacketReader) 
         .user_schema
         .name
         .clone();
+
+    println!("On Lobby - {name} : {text}");
             
     if chat_kind == 1 { // Whisper.
         let receiver_name = pr.string(13);
