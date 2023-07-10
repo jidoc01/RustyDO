@@ -1,7 +1,9 @@
 [package]
-name = "server"
-version = "0.0.1"
+name = "RustyDO"
+version = "0.1.0"
 authors = ["JungHyun Kim <jidoc01@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/jidoc01/RustyDO"
 edition = "2021"
 
 [dependencies]
