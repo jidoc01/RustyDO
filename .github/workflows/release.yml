@@ -1,0 +1,98 @@
+on:
+  push:
+    tags:
+    - 'v*'
+
+name: Upload Release Asset
+
+env:
+  NAME: RustyDO
+
+jobs:
+  create_release:
+    permissions: write-all
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Get Version from Tag
+        id: tag_name
+        run: |
+          echo ::set-output name=current_version::${GITHUB_REF#refs/tags/v}
+        shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Changelog
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: ${{ steps.tag_name.outputs.current_version }}
+          path: ./CHANGELOG.md
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{env.BUILD_CONFIGURATION}} ${{ github.ref }}
+          body:  ${{ steps.changelog_reader.outputs.changes }}
+          draft: false
+          prerelease: false
+
+  build:
+    permissions: write-all
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    needs: create_release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-pc-windows-gnu
+            name: win-x86_64
+            ext: .exe
+          - target: x86_64-unknown-linux-musl
+            name: linux-x86_64
+            ext:
+          - target: aarch64-unknown-linux-musl
+            name: linux-arm64
+            ext:
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      - name: Get Executable Name
+        id: extname
+        shell: bash
+        run: |
+          echo "name=$PROJ_NAME$CURR_EXT" >> $GITHUB_OUTPUT
+        env:
+          PROJ_NAME: ${{env.NAME}}
+          CURR_EXT: ${{matrix.ext}}
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --release --target=${{ matrix.target }} --target-dir ./build
+      - name: Zip
+        run: |
+          zip -j ${{env.NAME}}-${{matrix.name}}.zip ./build/${{matrix.target}}/release/${{steps.extname.outputs.name}} README.md CHANGELOG.md config.toml
+      - name: Upload Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./${{env.NAME}}-${{matrix.name}}.zip
+          asset_name: ${{env.NAME}}-${{matrix.name}}.zip
+          asset_content_type: application/zip
