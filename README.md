@@ -3,18 +3,25 @@ RustyDO
 
 A server emulator for Digimon Online v1.5.
 
+Homepage: https://jidoc01.github.io/RustyDO
 
 ## Credits
 
 Digimon Online v1.5 was created by CCR. The rights of the game and its IP belong
-to CCR and BANDAI, respectively.
+to Move Interactive and BANDAI, respectively.
 
 This repository is to emulate the server and does not copyright the game itself
 in any form or use it for profit. The user is solely responsible for the
 consequences of using this.
 
-This repository is maintained by JungHyun Kim (@jidoc01).
+This repository is maintained by Jung Hyun Kim (@jidoc01).
 
+디지몬 온라인 v1.5는 CCR이 제작한 온라인 게임입니다.
+게임의 저작권, 그리고 게임이 사용하는 캐릭터 IP는 각각 Move Interactive, 그리고 BANDAI에게 있습니다.
+
+이 프로젝트는 서비스 종료된 디지몬 온라인 v1.5 게임의 서버 에뮬레이터를 구현하는 것을 목표로 하고 있습니다.
+서버 로직만을 구현할 뿐, 게임과 관련한 그 어떤 저작권도 침해하지 않습니다. 또한 이 프로젝트를 이용한 서버 운영은 게임산업법에 의거하여 엄격히 금지됩니다.
+프로젝트 사용에 따른 법적 책임은 개인에게 귀속됩니다.
 
 ## Announcements
 
@@ -61,9 +68,6 @@ as we can.
 + Client: https://archive.org/details/digimonbattleserver
 
 
-## How to run
-
-https://jidoc01.github.io/RustyDO
 
 
 ## To those who want to contribute
@@ -126,4 +130,4 @@ There are features not implemented (or finished) yet. You can search `TODO` in t
 
 [GNU AGPL v3+](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
-Copyright 2022. JungHyun Kim (jidoc01).
+Copyright 2022. Jung Hyun Kim (jidoc01).
