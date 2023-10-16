@@ -61,58 +61,7 @@ Execute the server executable. It will start the server emulation for Digimon On
 
 ## How to Play
 
-The previous section explained how to run RustyDO. This section explains how to play Digimon Online v1.5 with RustyDO.
-
-{: .warning }
-The client of Digimon Online v1.5 only supports Windows OS. Check your OS first.
-
-### Download Client
-
-Download the client of Digimon Online v1.5. We've archieved the old client obtained in 2002 [(link)](https://archive.org/details/digimonbattleserver).
-
-Extract the file and find `Digimon Online` directory; we will use contents in the directory only.
-
-### Edit Registry
-
-Copy the absolute path of `Digimon Online` directory. And, with Windows Registry Editor, paste it to the registry item with the key `PATH` of `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\X2Online\Digimon Online V1.5`.
-
-Or, you can use a registry script. For example, let's say the path of your `Digimon Online` is `C:/X2Online/Digimon Online`. You can use the following registry script:
-
-```
-Windows Registry Editor Version 5.00
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\X2Online\Digimon Online V1.5]
-"PATH"="C:\\X2Online\\Digimon Online"
-```
-
-You can copy the registry script above, and save it to a file with the extension `reg` (i.e. `digimon.reg`). Execute the file, and it will register the `PATH` automatically.
-
-### Edit Server Configuration
-
-In the `Digimon Online` directory, find `svr.info`. Open it with any text editor.
-
-Search ip addresses in the file. Replace them by your ip address on which RustyDO is running. Use a dot-separated address (not a domain name).
-
-For example, let's say `192.168.0.1` is your server address. The result should be as follows:
-
-```
-101	0	100	192.168.0.1		Status1
-...
-401	3	5000	192.168.0.1		폴더대륙
-```
-
-{: .note }
-IP addresses should be public ip addresses if you'd like to accept players from the outside of your local network.
-
-{: .warning }
-Do not distribute the client with any modification. In Korean copyright law, it is strictly forbidden.
-
-### Run Game
-
-In the `Digimon Online` directory, type the instruction to execute the client:
-
-```bash
-./digimon.dll "1 1"
-```
-
-Enjoy!
+We do not offer any guidance for operating servers.
+We focus on how to develop our server code. We do not share how to operate his/her own server.
+Please understand that it is strictly forbidden to operate private servers in Korea:
+see [게임산업진흥에 관한 법률 제32조 (게임산업법)](https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EA%B2%8C%EC%9E%84%EC%82%B0%EC%97%85%EC%A7%84%ED%9D%A5%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0)

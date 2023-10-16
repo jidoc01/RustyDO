@@ -41,11 +41,7 @@ git clone https://github.com/jidoc01/RustyDO
 cargo run
 ```
 
-<small>Done! Now, RustyDO is accepting players.</small>
-
-### Client installation
-
-If you want to know how to launch the game client, see [How to Play]({{'/RustyDO/docs/getting-started#how-to-play' }})
+<small>Done! Now, RustyDO is ready.</small>
 
 ---
 
@@ -53,9 +49,9 @@ If you want to know how to launch the game client, see [How to Play]({{'/RustyDO
 
 [GNU AGPL v3+](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
-Copyright 2022. [JungHyun Kim (jidoc01)](https://github.com/jidoc01).
+Copyright 2022. [Jung Hyun Kim (jidoc01)](https://github.com/jidoc01).
 
 {: .warning }
-> Digimon Online v1.5 was created by [CCR](http://ccrcontentstree.co.kr/). The rights of the game and its IP belong to CCR and [BANDAI](https://www.bandai.co.jp/), respectively.
+> The right of Digimon Online v1.5 is owned by Move Interactive. The rights of the game and its IP belong to Move Interactive and [BANDAI](https://www.bandai.co.jp/), respectively.
 >
 > This repository is to emulate the server and does not copyright the game itself in any form or use it for profit. The user is solely responsible for the consequences of using this.
