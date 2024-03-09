@@ -6,6 +6,7 @@ use crate::util::reader::Reader;
 
 use self::handler::try_parse;
 
+#[derive(Debug)]
 pub enum InPacket {
     RequestServerStatus,
     ParsingError(Error),

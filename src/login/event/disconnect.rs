@@ -4,30 +4,30 @@ use crate::{login::*, storage::{account::Account, Storage, }};
 
 use super::DisconnectEvent;
 
-
 pub fn handle_when_disconnecting (
-    receiver: Receiver<Insert<ClientDisconnecting>>,
+    receiver: Receiver<Insert<ClientDisconnecting>, &mut ClientJobReceiver>,
     mut sender: Sender<DisconnectEvent>,
 ) {
+    debug!("handle_when_disconnecting");
     let e = receiver.event.entity;
     sender.send(DisconnectEvent { entity: e });
+    receiver.query.0.close();
 }
 
 pub fn handle_disconnect_event_before_login (
-    receiver: Receiver<DisconnectEvent, Option<&ClientAccount>>,
+    receiver: Receiver<DisconnectEvent, Not<&ClientAccount>>,
     mut despawner: Sender<Despawn>,
 ) {
-    if receiver.query.is_some() {
-        return;
-    }
+    debug!("handle_disconnect_event_before_login");
     let e = receiver.event.entity;
     despawner.despawn(e);
+    debug!("despawned entity {:?}", e);
 }
 
 pub fn handle_disconnect_event_in_bulletin (
     receiver: Receiver<DisconnectEvent, (&ClientAccount, &ClientOnBulletinBoard)>,
     mut despawner: Sender<Despawn>,
-    Single(mut storage): Single<&mut Storage>,
+    Single(storage): Single<&mut Storage>,
 ) {
     let e = receiver.event.entity;
     let account = &receiver.query.0.0;

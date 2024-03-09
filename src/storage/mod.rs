@@ -62,6 +62,8 @@ impl Default for Storage {
 }
 
 pub fn init(world_helper: &mut WorldHelper) {
-    let storage = Storage::default();
-    world_helper.spawn_single(storage);
+    world_helper
+        .add_component::<Storage>();
+    world_helper
+        .spawn_single(Storage::default());
 }

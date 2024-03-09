@@ -30,7 +30,7 @@ pub fn handle_server_tick_event(
     for _ in 0..MAX_RECV_PER_TICK {
         match server_socket.socket.try_recv_from(&mut buf) {
             Ok((n, addr)) => {
-                println!("Received {} bytes from {}", n, addr);
+                info!("Received {} bytes from {}", n, addr);
                 let buf = &buf[0..n];
                 packet_receiver.clear();
                 packet_receiver.push(buf);
@@ -48,7 +48,7 @@ pub fn handle_server_tick_event(
                 return;
             },
             Err(e) => {
-                panic!("{}", e);
+                warn!("{}", e);
             }
         }
     }
@@ -63,7 +63,7 @@ pub fn handle_packet_received_event(
     let mut packet_receiver = PacketReceiver::default();
     match receiver.event.pkt {
         InPacket::RequestServerStatus => {
-            println!("Received a request from {}", receiver.event.addr);
+            info!("Received a request from {}", receiver.event.addr);
             /*
             let response_pkt = ();
             sender.send(PacketSentEvent {

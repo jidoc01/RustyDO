@@ -1,8 +1,8 @@
 use crate::login::*;
 
 pub async fn run_client_session_async(
-    mut stream: TcpStream, 
-    client_tx: UnboundedSender<ClientJob>, 
+    mut stream: TcpStream,
+    client_tx: UnboundedSender<ClientJob>,
     mut client_session_rx: UnboundedReceiver<ClientSessionJob>
 ) {
     let mut recv_buf = [0u8; 1024];
@@ -12,7 +12,7 @@ pub async fn run_client_session_async(
         select! {
             res = stream.read(&mut recv_buf) => {
                 match res {
-                    Ok(n) => on_receive(&recv_buf[0..n], &mut acc, &client_tx, &enc_data),
+                    Ok(n) if n > 0 => on_receive(&recv_buf[0..n], &mut acc, &client_tx, &enc_data),
                     _ => { on_disconn(&client_tx); break; }
                 }
             },
@@ -25,17 +25,19 @@ pub async fn run_client_session_async(
                     break;
                 }
             }
-        }            
+        }
     }
     stream.shutdown().await.ignore();
     client_session_rx.close();
 }
 
 fn on_disconn(client_tx: &UnboundedSender<ClientJob>) {
+    debug!("Client session disconnected");
     client_tx.send(ClientJob::OnDisconnected).ignore();
 }
 
 fn on_receive(received: &[u8], acc: &mut Vec<u8>, sender: &UnboundedSender<ClientJob>, enc_data: &Option<ClientEncData>) {
+    debug!("Client session received {} bytes", received.len());
     acc.extend_from_slice(received);
     match enc_data {
         None => return,

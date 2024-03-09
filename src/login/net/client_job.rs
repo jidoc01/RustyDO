@@ -32,17 +32,15 @@ impl TaskExecutable for ClientJobTickerTask {
 /// We ignore the clients who are already being disconnected.
 pub fn handle_client_job(
     _: Receiver<ClientJobTick>,
-    mut fetcher: Fetcher<(EntityId, &mut ClientJobReceiver, Option<&ClientDisconnecting>)>,
+    mut fetcher: Fetcher<(EntityId, &mut ClientJobReceiver, Not<&ClientDisconnecting>)>,
     mut sender: Sender<(PacketEvent, Insert<ClientDisconnecting>)>,
 ) {
     fetcher
         .iter_mut()
-        .for_each(|(e, rx, disconnecting)| {
-            if disconnecting.is_some() { // ignore disconnecting clients
-                return;
-            }
+        .for_each(|(e, rx, _)| {
             let mut count = 0;
             while let Ok(msg) = rx.0.try_recv() { // TODO: use a global queue.
+                debug!("Received a client job {:?} for entity {:?}", msg, e);
                 match msg {
                     ClientJob::OnReceive(pkt) => sender.send(PacketEvent { entity: e, pkt }),
                     ClientJob::OnDisconnected => sender.insert(e, ClientDisconnecting)

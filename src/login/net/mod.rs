@@ -3,7 +3,7 @@ mod client_job;
 
 use std::time::Duration;
 
-use tokio::{io::{AsyncReadExt, AsyncWriteExt}, net::{TcpListener, TcpStream}, runtime::Handle, select, sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender}, task::block_in_place};
+use tokio::{io::{AsyncReadExt, AsyncWriteExt}, net::{TcpListener, TcpStream}, runtime::Handle, select, sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender}, };
 use self::{client_job::{handle_client_job, ClientJobTickerTask}, client_session::run_client_session_async};
 
 use crate::{login::*, world::TaskExecutable};
@@ -34,6 +34,7 @@ async fn listen_and_get_rx() -> UnboundedReceiver<AcceptInfo> {
         loop {
             let (stream, addr) = listener.accept().await.unwrap();
             tx.send(AcceptInfo { stream, addr }).unwrap();
+            debug!("Accepted a connection from {}", addr);
         }
     });
     return rx;
@@ -63,11 +64,7 @@ impl TaskExecutable for AcceptHandlerTask {
             let entity = world.spawn();
             let (client_tx, client_rx) = unbounded_channel();
             let (client_session_tx, client_session_rx) = unbounded_channel();
-            tokio::spawn(async move {
-                run_client_session_async(stream, client_tx, client_session_rx).await;
-            });
-
-            let client = world.spawn();
+            spawn_task(run_client_session_async(stream, client_tx, client_session_rx));
             world.insert(entity, ClientAddr(addr));
             world.insert(entity, ClientSessionJobSender(client_session_tx));
             world.insert(entity, ClientJobReceiver(client_rx));

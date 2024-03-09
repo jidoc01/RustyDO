@@ -8,26 +8,39 @@ mod encrypt;
 mod constants;
 mod world;
 
+use std::{net::UdpSocket, time::Instant};
+
 use prelude::*;
+use tracing_subscriber::filter::LevelFilter;
 use world::WorldHelper;
 
 fn main() {
     init();
+    run();
+}
+
+fn init() {
+    init_tokio_runtime();
+    #[cfg(debug_assertions)]
+    {
+        let level = LevelFilter::DEBUG;
+        tracing_subscriber::fmt().with_max_level(level).init();
+        std::env::set_var("RUST_BACKTRACE", "1");
+    }
+    debug!("Initialized");
+}
+
+fn run() {
     let mut world_helper = create_world_helper();
-    info!("Running the server");
+    debug!("Running...");
     loop {
-        let curr_time = std::time::Instant::now();
+        let curr_time = Instant::now();
         world_helper.execute();
         let elapsed = curr_time.elapsed();
         if elapsed < fps_to_duration(60) {
             std::thread::sleep(Duration::from_millis(1));
         }
     }
-}
-
-fn init() {
-    init_tokio_runtime();
-    tracing_subscriber::fmt().init();
 }
 
 fn create_world_helper() -> WorldHelper {

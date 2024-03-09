@@ -1,7 +1,5 @@
 mod net;
 
-use std::net::UdpSocket;
-
 use crate::world::WorldHelper;
 pub use crate::prelude::*;
 

@@ -8,14 +8,11 @@ use pwhash::bcrypt;
 use super::LoginEvent;
 
 pub fn handle_login_event(
-    r: Receiver<LoginEvent, (&ClientSessionJobSender, Option<&ClientId>)>,
+    r: Receiver<LoginEvent, (&ClientSessionJobSender, Not<&ClientId>)>,
     online_ids: Fetcher<&ClientId>,
     Single(storage): Single<&Storage>,
     mut after_login_adder: Sender<(Insert<ClientId>, Insert<ClientAccount>, Insert<ClientOnBulletinBoard>)>,
 ) {
-    if r.query.1.is_some() {
-        return;
-    }
     let mut online_id_set = get_online_id_set(&online_ids);
     let LoginEvent { entity, id, pw } = r.event;
     let sender = r.query.0;
