@@ -72,6 +72,7 @@ impl Reader<'_> {
 
     pub fn read_fixed_string(&mut self, len: usize) -> anyhow::Result<String> {
         let data = self.read_bytes(len)?;
+        let data = data.iter().take_while(|&&x| x != 0).cloned().collect::<Vec<u8>>();
         let ret = decode_to_string(data)?;
         Ok(ret)
     }

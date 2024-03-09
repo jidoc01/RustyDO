@@ -33,7 +33,7 @@ impl<'a> Writer<'a> {
 
     pub fn write_u16(&mut self, v: u16) -> anyhow::Result<()> {
         self.assert_space(2)?;
-        self.buffer.write_u16::<LittleEndian>(v.into())?;
+        self.buffer.write_u16::<LittleEndian>(v)?;
         Ok(())
     }
 
@@ -51,15 +51,7 @@ impl<'a> Writer<'a> {
         Ok(())
     }
 
-    pub fn read_fixed_string(&mut self, s: String, n: usize) -> anyhow::Result<()> {
-        let b = encode_to_vec(s)?;
-        anyhow::ensure!(b.len() <= n);
-        self.write_bytes(&b)?;
-        self.write_bytes(vec![0u8; n - b.len()])?; // TODO: do not allocate a new chunk
-        Ok(())
-    }
-
-    pub fn get(&'a self) -> &'a[u8] {
+    pub fn get(&self) -> &[u8] {
         &self.buffer
     }
 

@@ -6,6 +6,11 @@ use anyhow::Error;
 
 use crate::util::writer::Writer;
 
+pub trait OutPacketBuildable: Sync + Send + core::fmt::Debug {
+    fn opcode (&self) -> u8;
+    fn try_build(&self, writer: &mut Writer) -> anyhow::Result<()>;
+}
+
 #[derive(Debug)]
 pub struct LoginMessage(pub LoginMessageKind);
 
@@ -51,9 +56,5 @@ impl OutPacketBuildable for ServerStatusResponse {
     }
 }
 
-pub trait OutPacketBuildable: Sync + Send + core::fmt::Debug {
-    fn opcode (&self) -> u8;
-    fn try_build(&self, writer: &mut Writer) -> anyhow::Result<()>;
-}
 
 

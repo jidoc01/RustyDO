@@ -96,7 +96,6 @@ pub fn handle_packet_sent_event(
     }
 }
 
-
 #[derive(Component)]
 pub struct ServerSocket {
     socket: tokio::net::UdpSocket,
@@ -125,9 +124,8 @@ impl ServerSocket {
     }
 
     pub fn send(&self, addr: SocketAddr, pkt: &Box<dyn OutPacketBuildable>) -> anyhow::Result<()> {
-        let pkt = pkt.as_ref();
-        let chunk = build_packet(pkt)?;
-        // self.socket.try_send_to(&chunk, addr);
+        let chunk = build_packet(pkt.as_ref())?;
+        self.socket.try_send_to(&chunk, addr)?;
         Ok(())
     }
 }

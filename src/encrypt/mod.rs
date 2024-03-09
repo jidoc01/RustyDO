@@ -32,9 +32,17 @@ pub fn encrypt_header<T: AsMut<[u8]>>(mut header: T) {
     let key = header[HEADER_SIZE - 1];
     assert!(key < 8, "Invalid key: {}", key);
 
-    (0 .. len - 1).for_each(|i| {
-        header[i] = (header[i] >> key) | (header[(i + 8 - 1) % 8] << (8 - key));
-    })
+    (0 .. len - 1)
+        .into_par_iter()
+        .map(|i| {
+            (header[i] >> key) | (header[(i + 8 - 1) % 8] << (8 - key))
+        })
+        .enumerate()
+        .collect::<Vec<_>>()
+        .iter()
+        .for_each(|(i, v)| {
+            header[*i] = *v;
+        });
 }
 
 #[inline]
@@ -53,7 +61,13 @@ pub fn decrypt_header<T: AsMut<[u8]>>(mut header: T) {
     }
 
     (0 .. len - 1)
-        .for_each(|i| {
-            header[i] = (header[i] << key) | (header[(i + 1) % 8] >> (8 - key));
+        .map(|i| {
+            (header[i] << key) | (header[(i + 1) % 8] >> (8 - key))
+        })
+        .enumerate()
+        .collect::<Vec<_>>()
+        .iter()
+        .for_each(|(i, v)| {
+            header[*i] = *v;
         });
 }
