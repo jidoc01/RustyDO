@@ -30,8 +30,8 @@ impl WorldHelper {
         self
     }
 
-    pub fn add_system<S, M>(&mut self, system: S) -> &mut Self where S: IntoSystem<M> {
-        self.world.add_system(system);
+    pub fn add_system<S, M>(&mut self, system: S) -> &mut Self where S: IntoHandler<M> {
+        self.world.add_handler(system);
         self
     }
 
