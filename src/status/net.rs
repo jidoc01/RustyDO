@@ -1,6 +1,8 @@
 use std::io::ErrorKind;
 
-use crate::{packet::{incoming::InPacket, outgoing::OutPacketBuildable, packet_receiver::PacketReceiver}, status::*, world::TaskExecutable};
+use evenio::handler::Local;
+
+use crate::{encrypt::{encrypt_body, encrypt_header}, packet::{build_packet, incoming::InPacket, outgoing::{OutPacketBuildable, ServerStatusResponse}, packet_receiver::PacketReceiver}, status::*, world::TaskExecutable};
 
 const STATUS_SERVER_PORT: u16 = 9874;
 const MAX_RECV_PER_TICK: usize = 2;
@@ -15,7 +17,7 @@ pub struct PacketReceivedEvent {
 }
 
 #[derive(Event)]
-pub struct PacketSentEvent {
+pub struct PacketSendEvent {
     pub addr: SocketAddr,
     pub pkt: Box<dyn OutPacketBuildable>,
 }
@@ -25,31 +27,38 @@ pub fn handle_server_tick_event(
     Single(server_socket): Single<&mut ServerSocket>,
     mut sender: Sender<PacketReceivedEvent>,
 ) {
-    let mut buf = [0u8; 1024];
     let mut packet_receiver = PacketReceiver::default();
     for _ in 0..MAX_RECV_PER_TICK {
-        match server_socket.socket.try_recv_from(&mut buf) {
+        match server_socket.socket.try_recv_from(&mut server_socket.receive_buffer) {
+            Ok((_, addr)) if server_socket.is_blocked(&addr) => {
+                debug!("Ignore a packet from a blocked IP: {}", addr);
+            },
             Ok((n, addr)) => {
                 info!("Received {} bytes from {}", n, addr);
-                let buf = &buf[0..n];
+                let buf = &server_socket.receive_buffer[0..n];
                 packet_receiver.clear();
                 packet_receiver.push(buf);
+                // TODO: no need to allocate a new buffer for the body.
+                // Instead we can slice the packet buffer w/ proper lifetime.
                 let Ok(Some(body)) = packet_receiver.try_fetch_body() else {
                     // TODO: block the IP
+                    server_socket.block_ip(addr);
                     continue;
                 };
+                debug!("body: {:?}", body);
                 let pkt = InPacket::parse(body);
                 sender.send(PacketReceivedEvent {
                     addr,
                     pkt,
                 });
             },
-            Err(e) if e.kind() == ErrorKind::WouldBlock => {
-                return;
+            Err(e) if e.kind() == ErrorKind::WouldBlock => { // nothing to read
+                break;
             },
             Err(e) => {
                 warn!("{}", e);
-            }
+            },
+            _ => {}
         }
     }
 }
@@ -57,45 +66,42 @@ pub fn handle_server_tick_event(
 /// TODO: detect DoS & block the IP
 pub fn handle_packet_received_event(
     receiver: Receiver<PacketReceivedEvent>,
-    mut sender: Sender<PacketSentEvent>,
+    mut sender: Sender<PacketSendEvent>,
 ) {
-    let mut buf = [0u8; 1024];
-    let mut packet_receiver = PacketReceiver::default();
-    match receiver.event.pkt {
-        InPacket::RequestServerStatus => {
-            info!("Received a request from {}", receiver.event.addr);
-            /*
-            let response_pkt = ();
-            sender.send(PacketSentEvent {
-                addr: receiver.event.addr,
-                pkt: response_pkt
+    let pkt = &receiver.event.pkt;
+    let addr = &receiver.event.addr;
+    debug!("Received a packet {:?} from {}", pkt, addr);
+    match pkt {
+        InPacket::ServerStatusRequest { code } => {
+            sender.send(PacketSendEvent {
+                addr: addr.clone(),
+                pkt: Box::new(ServerStatusResponse { code: *code }),
             });
-            */
         },
         _ => {
-            // ?
+            debug!("Received an unhandled packet {:?} from {}", pkt, receiver.event.addr);
         }
     }
 }
 
 pub fn handle_packet_sent_event(
-    mut receiver: Receiver<PacketSentEvent>,
-    Single(mut server_socket): Single<&mut ServerSocket>,
+    receiver: Receiver<PacketSendEvent>,
+    Single(server_socket): Single<&ServerSocket>,
 ) {
-    /*
-    let mut writer = Writer::from_vec_mut(&mut v);
-    if pkt.try_build(&mut writer).is_err() {
-        // ?
-        return;
+    match server_socket.send(receiver.event.addr, &receiver.event.pkt) {
+        Ok(_) => {},
+        Err(e) => {
+            warn!("Sent a packet to {} failed: {}", receiver.event.addr, e);
+        },
     }
-    let (receive_task) = receiver.query;
-    let a = receive_task.0;
-    */
 }
+
 
 #[derive(Component)]
 pub struct ServerSocket {
-    socket: tokio::net::UdpSocket
+    socket: tokio::net::UdpSocket,
+    receive_buffer: [u8; 1024],
+    blocked_addrs: HashSet<SocketAddr>, // TODO: manage a ban list in the db
 }
 
 impl ServerSocket {
@@ -104,8 +110,25 @@ impl ServerSocket {
         let socket = block_on(tokio::net::UdpSocket::bind(addr)).unwrap();
         info!("Status server listening on port {}", STATUS_SERVER_PORT);
         Self {
-            socket
+            socket,
+            receive_buffer: [0u8; 1024],
+            blocked_addrs: HashSet::new(),
         }
+    }
+
+    pub fn is_blocked(&self, addr: &SocketAddr) -> bool {
+        self.blocked_addrs.contains(addr)
+    }
+
+    pub fn block_ip(&mut self, addr: SocketAddr) {
+        self.blocked_addrs.insert(addr);
+    }
+
+    pub fn send(&self, addr: SocketAddr, pkt: &Box<dyn OutPacketBuildable>) -> anyhow::Result<()> {
+        let pkt = pkt.as_ref();
+        let chunk = build_packet(pkt)?;
+        // self.socket.try_send_to(&chunk, addr);
+        Ok(())
     }
 }
 

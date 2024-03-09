@@ -13,6 +13,7 @@ pub use std::time::Duration;
 pub use std::collections::HashSet;
 pub use evenio::prelude::*;
 pub use log::*;
+pub use rayon::prelude::*;
 
 pub use crate::util::writer::Writer;
 pub use crate::util::reader::Reader;

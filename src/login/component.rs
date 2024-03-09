@@ -14,10 +14,6 @@ pub struct ClientAddr(pub SocketAddr);
 #[derive(Component, Clone, PartialEq, Hash, PartialOrd, Eq, Ord)]
 pub struct ClientUid(pub u16);
 
-#[derive(Component, Clone)]
-pub struct ClientEncData {
-}
-
 #[derive(Component, PartialEq, Hash, PartialOrd, Eq, Ord)]
 pub struct ClientId(pub String);
 
@@ -56,20 +52,5 @@ impl ClientSessionJobSender {
 
     pub fn send_shared_packet(&self, pkt: Arc<dyn OutPacketBuildable + Send + Sync>) {
         self.send(ClientSessionJob::SendPacket(pkt));
-    }
-}
-
-impl ClientEncData {
-    pub fn new() -> Self {
-        Self {}
-    }
-    pub fn encrypt(&self, body: &[u8]) -> Vec<u8> {
-        todo!()
-    }
-}
-
-impl Default for ClientEncData {
-    fn default() -> Self {
-        Self {}
     }
 }

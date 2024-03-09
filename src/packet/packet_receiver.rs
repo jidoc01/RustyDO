@@ -1,4 +1,6 @@
-use crate::encrypt::decrypt_header;
+use tracing_subscriber::field::debug;
+
+use crate::encrypt::{decrypt_header, encrypt_body};
 
 use super::incoming::InPacket;
 
@@ -23,7 +25,7 @@ impl PacketReceiver {
     }
 
     pub fn try_fetch_body(&mut self) -> anyhow::Result<Option<Vec<u8>>> {
-        let mut gathering = &mut self.gathering;
+        let gathering = &mut self.gathering;
 
         let header = {
             if gathering.len() < HEADER_SIZE {
@@ -33,11 +35,13 @@ impl PacketReceiver {
             decrypt_header(&mut header);
             header
         };
+        debug!("header: {:?}", header);
 
         let body_len = {
             let temp_bytes = [header[0], header[1]];
             u16::from_le_bytes(temp_bytes) as usize
         };
+        debug!("body_len: {}", body_len);
         if body_len >= INCOMING_BODY_LEN_THRESHOLD {
             anyhow::bail!("Invalid body length: {}", body_len);
         }
@@ -46,7 +50,8 @@ impl PacketReceiver {
             return Ok(None);
         }
 
-        let body = gathering[HEADER_SIZE..HEADER_SIZE + body_len].to_vec();
+        let mut body = gathering[HEADER_SIZE..HEADER_SIZE + body_len].to_vec();
+        encrypt_body(&mut body);
         gathering.drain(..chunk_size);
         Ok(Some(body))
     }

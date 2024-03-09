@@ -23,7 +23,8 @@ macro_rules! register_handlers {
 
 register_handlers!(HANDLER_MAP, [
     LoginHandler,
-    RequestNoticeHandler
+    RequestNoticeHandler,
+    ServerStatusRequestHandler
 ]);
 
 pub trait InPacketHandler {
@@ -43,7 +44,7 @@ impl HandlerMap {
     fn parse(&self, opcode: u8, reader: &mut Reader) -> anyhow::Result<InPacket> {
         match self.0.get(&opcode) {
             Some(handler) => handler.parse(reader),
-            None => anyhow::bail!("unknown packet opcode: {}", opcode)
+            None => Ok(InPacket::Unknown(opcode))
         }
     }
 }
@@ -58,4 +59,15 @@ pub fn try_parse(reader: &mut Reader) -> anyhow::Result<InPacket> {
     let opcode = reader.read_u8()?;
     reader.advance(7);
     HANDLER_MAP.parse(opcode, reader)
+}
+
+struct ServerStatusRequestHandler;
+
+impl InPacketHandler for ServerStatusRequestHandler {
+    fn opcode(&self) -> u8 { 1 }
+
+    fn parse(&self, reader: &mut Reader) -> anyhow::Result<InPacket> {
+        let code = reader.read_u8()?;
+        Ok(InPacket::ServerStatusRequest { code })
+    }
 }

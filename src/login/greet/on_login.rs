@@ -2,7 +2,7 @@
 use crate::*;
 use crate::login::component::*;
 
-use self::{packet::outgoing::{OutPacketBuildable, SetAccountInfo}, storage::account::Account};
+use self::{packet::outgoing::{AccountInfo, OutPacketBuildable }, storage::account::Account};
 
 pub fn system_greet_client_on_login(
     q: Receiver<Insert<ClientId>, (&ClientAccount, &ClientSessionJobSender)>
@@ -13,7 +13,8 @@ pub fn system_greet_client_on_login(
 }
 
 fn build_account_info_packet(account: &Account) -> impl OutPacketBuildable {
+    // FIXME
     let id = &account.id;
     let name = &account.name;
-    SetAccountInfo
+    AccountInfo
 }

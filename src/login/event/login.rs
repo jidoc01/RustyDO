@@ -13,21 +13,22 @@ pub fn handle_login_event(
     Single(storage): Single<&Storage>,
     mut after_login_adder: Sender<(Insert<ClientId>, Insert<ClientAccount>, Insert<ClientOnBulletinBoard>)>,
 ) {
+    debug!("handle_login_event: {}", r.event.id);
     let mut online_id_set = get_online_id_set(&online_ids);
     let LoginEvent { entity, id, pw } = r.event;
     let sender = r.query.0;
     let Some(account) = storage.find_one::<Account>(doc!{ "id": id }) else {
-        let pkt = LoginMessage(LoginMessageKind::NoId);
+        let pkt = LoginMessage(LoginMessageKind::InvalidId);
         sender.send_packet(pkt);
         return;
     };
     if account.pw != encrypt_password(pw) {
-        let pkt = LoginMessage(LoginMessageKind::InvalidInfo);
+        let pkt = LoginMessage(LoginMessageKind::InvalidAccountInfo);
         sender.send_packet(pkt);
         return;
     }
     if online_id_set.contains(id) {
-        let pkt = LoginMessage(LoginMessageKind::AlreadyOnline);
+        let pkt = LoginMessage(LoginMessageKind::Online);
         sender.send_packet(pkt);
         return;
     }

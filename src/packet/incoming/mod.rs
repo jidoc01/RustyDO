@@ -8,14 +8,17 @@ use self::handler::try_parse;
 
 #[derive(Debug)]
 pub enum InPacket {
-    RequestServerStatus,
-    ParsingError(Error),
-    Login {
+    ServerStatusRequest {
+        code: u8,
+    },
+    LoginRequest {
         id: String,
         pw: String,
     },
-    EnterLobby,
-    RequestNotice,
+    EnteringLobby,
+    NoticeRequest,
+    Unknown(u8),
+    ParsingError(Error),
 }
 
 impl InPacket {
@@ -24,3 +27,4 @@ impl InPacket {
         try_parse(&mut reader).unwrap_or_else(|e| InPacket::ParsingError(e))
     }
 }
+

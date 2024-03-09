@@ -1,8 +1,10 @@
+#[inline]
 pub fn transfer<T, U> (mut data: T, key: U) where T: AsMut<[u8]>, U: AsRef<[u8]>{
     let mut state = gen_state(key.as_ref());
     transfer_aux(data.as_mut(), &mut state);
 }
 
+#[inline]
 fn gen_state(key: &[u8]) -> [u8; 256] {
     let mut state = [0u8; 256];
     for i in 0..256 {
@@ -18,6 +20,7 @@ fn gen_state(key: &[u8]) -> [u8; 256] {
     state
 }
 
+#[inline]
 fn transfer_aux(data: &mut [u8], state: &mut [u8; 256]) {
     let mut i = 0usize;
     let mut j = 0usize;

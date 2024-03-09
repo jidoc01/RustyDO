@@ -1,19 +1,43 @@
 mod rc4;
 
+use crate::*;
+
 use crate::constants::HEADER_SIZE;
 
-pub fn encrypt_body() {
-    todo!()
+const BODY_CRYPTO_SIZE: usize = 16;
+
+lazy_static::lazy_static! {
+    static ref BODY_CRYPTO_KEY: Vec<u8> = {
+        let mut key = b"\xf6\xef\x8b\xa1\x5c".to_vec();
+        let mut salt = b"\x00".repeat(BODY_CRYPTO_SIZE - key.len());
+        key.append(&mut salt);
+        key
+    };
 }
 
-pub fn decrypt_body<T: AsMut<[u8]>>(mut body: T) {
-    todo!()
+#[inline]
+pub fn encrypt_body<T: AsMut<[u8]>>(mut body: T) {
+    rc4::transfer(&mut body, BODY_CRYPTO_KEY.as_slice());
 }
 
-pub fn encrypt_header() {
-    todo!()
+#[inline]
+pub fn encrypt_header<T: AsMut<[u8]>>(mut header: T) {
+    let header = header.as_mut();
+
+    let len = header.len();
+    if len != HEADER_SIZE {
+        panic!("Invalid header size: {}", len);
+    }
+
+    let key = header[HEADER_SIZE - 1];
+    assert!(key < 8, "Invalid key: {}", key);
+
+    (0 .. len - 1).for_each(|i| {
+        header[i] = (header[i] >> key) | (header[(i + 8 - 1) % 8] << (8 - key));
+    })
 }
 
+#[inline]
 pub fn decrypt_header<T: AsMut<[u8]>>(mut header: T) {
     let header = header.as_mut();
 
@@ -28,7 +52,8 @@ pub fn decrypt_header<T: AsMut<[u8]>>(mut header: T) {
         return;
     }
 
-    (0 .. len - 1).for_each(|i| {
-        header[i] = (header[i] << key) | (header[(i + 1) % 8] >> (8 - key));
-    })
+    (0 .. len - 1)
+        .for_each(|i| {
+            header[i] = (header[i] << key) | (header[(i + 1) % 8] >> (8 - key));
+        });
 }

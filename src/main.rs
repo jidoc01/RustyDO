@@ -7,6 +7,8 @@ mod prelude;
 mod encrypt;
 mod constants;
 mod world;
+#[cfg(test)]
+mod test;
 
 use std::{net::UdpSocket, time::Instant};
 

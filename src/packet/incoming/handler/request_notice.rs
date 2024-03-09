@@ -4,9 +4,10 @@ use super::InPacketHandler;
 pub struct RequestNoticeHandler;
 
 impl InPacketHandler for RequestNoticeHandler {
-    fn opcode(&self) -> u8 { 3 }
+    fn opcode(&self) -> u8 { 255 } // FIXME
 
-    fn parse(&self, reader: &mut Reader) -> anyhow::Result<InPacket> {
-        todo!()
+    fn parse(&self, _reader: &mut Reader) -> anyhow::Result<InPacket> {
+        let pkt = InPacket::NoticeRequest;
+        Ok(pkt)
     }
 }

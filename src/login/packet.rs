@@ -17,7 +17,7 @@ pub fn handle_packet_event(
     mut login_event_sender: Sender<LoginEvent>,
 ) {
     match &receiver.event.pkt {
-        InPacket::Login { id, pw } => {
+        InPacket::LoginRequest { id, pw } => {
             login_event_sender.send(LoginEvent {
                 entity: receiver.event.entity,
                 id: id.into(),
