@@ -12,19 +12,22 @@ use prelude::*;
 use world::WorldHelper;
 
 fn main() {
-    /*
-    let running = Arc::new(AtomicBool::new(true));
-    let r = running.clone();
-    ctrlc::set_handler(move || {
-        r.store(false, Ordering::SeqCst);
-    }).unwrap();
-    */
+    init();
+    let mut world_helper = create_world_helper();
+    info!("Running the server");
+    loop {
+        let curr_time = std::time::Instant::now();
+        world_helper.execute();
+        let elapsed = curr_time.elapsed();
+        if elapsed < fps_to_duration(60) {
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+}
+
+fn init() {
     init_tokio_runtime();
     tracing_subscriber::fmt().init();
-    let mut world_helper = create_world_helper();
-    loop {
-        world_helper.execute();
-    }
 }
 
 fn create_world_helper() -> WorldHelper {
