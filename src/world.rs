@@ -26,7 +26,7 @@ impl WorldHelper {
     }
 
     pub fn add_task<T: TaskExecutable + 'static>(&mut self, task: T) -> &mut Self {
-        self.task_handler.register(task);
+        self.task_handler.register(&mut self.world, task);
         self
     }
 
@@ -37,6 +37,11 @@ impl WorldHelper {
 
     pub fn add_event<E: Event>(&mut self) -> &mut Self {
         self.world.add_event::<E>();
+        self
+    }
+
+    pub fn add_component<C: Component>(&mut self) -> &mut Self {
+        self.world.add_component::<C>();
         self
     }
 }
@@ -96,12 +101,13 @@ impl PeriodicTaskHandler {
             if task.last_time.elapsed() >= inner_task.duration() {
                 inner_task.execute(world);
                 task.last_time = Instant::now(); /* TODO: update the last time only once */
+                // info!("Task executed with duration {:?}", inner_task.duration());
             }
         }
     }
 
-    pub fn register<T: TaskExecutable + 'static>(&mut self, task: T) {
+    pub fn register<T: TaskExecutable + 'static>(&mut self, world: &mut World, task: T) {
         self.tasks.push(PeriodicTask::new(task));
-        self.tasks.last_mut().unwrap().task.init(&mut World::new());
+        self.tasks.last_mut().unwrap().task.init(world);
     }
 }
