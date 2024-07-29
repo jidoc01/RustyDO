@@ -20,6 +20,7 @@ use std::borrow::Borrow;
 use rusqlite::{params, NO_PARAMS};
 
 use crate::prelude::*;
+use crate::util::config::ConfigTicker;
 use super::*;
 
 const PACKET_FIND_NAME: u8          = 7;
@@ -43,6 +44,13 @@ fn get_notice_msg(server: &Server) -> String {
         .replace("\n", "\r\n\r\n") // Add carriage returns in front of the line breaks.
 }
 
+fn get_ticker_msg(server: &Server) -> ConfigTicker {
+    server
+        .config
+        .ticker
+	.clone()
+}
+
 fn send_notice(server: &mut Server, entity_id: &EntityId, pr: PacketReader) -> Result<()> {
     let notice_msg = get_notice_msg(server);
     let pkt = PacketWriter::new(PACKET_REQUEST_NOTICE + 1)
@@ -54,15 +62,12 @@ fn send_notice(server: &mut Server, entity_id: &EntityId, pr: PacketReader) -> R
 }
 
 fn send_ticker(server: &mut Server, entity_id: &EntityId, _pr: PacketReader) -> Result<()> {
-    let msg_initial = "접속하고 싶은 채널을 선택해라 동~글.";
-    let msg_board = "읽고 싶은 글을 선택해라 동~글.";
-    let msg_ranking = "테이머들의 랭킹을 볼 수 있다 동~글.";
-    let msg_selection = "디지몬 온라인의 세계에 잘 왔다 동~글.";
+    let ticker_msg = get_ticker_msg(server);
     let pkt = PacketWriter::new(PACKET_REQUEST_TICKER + 1)
-        .string(msg_initial, 101)
-        .string(msg_board, 101)
-        .string(msg_ranking, 101)
-        .string(msg_selection, 101)
+        .string(&ticker_msg.initial, 101)
+        .string(&ticker_msg.board, 101)
+        .string(&ticker_msg.ranking, 101)
+        .string(&ticker_msg.selection, 101)
         .as_vec();
     entity::session::send_by_eid(&server.world, entity_id, pkt);
     Ok(())

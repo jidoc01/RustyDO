@@ -19,7 +19,7 @@ mod preader;
 mod pwriter;
 mod object;
 pub mod db;
-mod config;
+pub mod config;
 pub mod hash;
 
 pub use object::*;

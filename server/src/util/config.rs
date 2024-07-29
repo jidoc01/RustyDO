@@ -19,13 +19,14 @@ use crate::prelude::*;
 
 use rand::distributions::{Alphanumeric, DistString};
 use serde::{Deserialize};
-use config;
+use ::config;
 
 #[derive(Clone, Deserialize)]
 pub struct Config {
     pub server: ConfigServer,
     pub user: ConfigUser,
     pub message: ConfigMessage,
+    pub ticker: ConfigTicker,
 }
 
 #[derive(Clone, Deserialize)]
@@ -44,6 +45,14 @@ pub struct ConfigUser {
 #[derive(Clone, Deserialize)]
 pub struct ConfigMessage {
     pub notice: String,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct ConfigTicker {
+    pub initial: String,
+    pub board: String,
+    pub ranking: String,
+    pub selection: String,
 }
 
 fn get_random_string(len: usize) -> String {
